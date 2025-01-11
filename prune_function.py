@@ -62,9 +62,9 @@ def adjust_new_linear(layer,filters_to_keep):
                 bias = (layer.bias is not None)
     )
     ### weight 옮기기
-    new_linear.weight.data = layer.weight.data[filters_to_keep,:]
+    new_linear.weight.data = layer.weight.data[:, filters_to_keep]
     if layer.bias is not None:
-        new_linear.bias.data = layer.bias.data[filters_to_keep]
+        new_linear.bias.data = layer.bias.data[:]
 
     return new_linear
 
