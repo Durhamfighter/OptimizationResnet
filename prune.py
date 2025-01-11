@@ -1,5 +1,6 @@
 from prune_function import *
-
+import torch
+import torch.nn as nn
 def prune_step(network,name,num_channel,idx2name_module,index):
     # 현재 이름에 따라 filters_to_keep 정함
     if 'layer' in name:
@@ -22,8 +23,11 @@ def prune_step(network,name,num_channel,idx2name_module,index):
                     )
             setattr(current_block,'downsample',conv)
         ## sequential 부분도 생각해야함
-        elif current_block.downsample is not None and current_block.dowsaconv1.in_channels!=current_block.conv2.out_channels:
-            ##  downsample안에 차원 생각해야함 ()컨디션생각.. 위에서 이미 만들어진경우도있음
+        elif isinstance(current_block.downsmaple,nn.Sequential):
+            if name_lst[2]=='cnn2':
+                current_block.downsample[0] =  prune_layer(current_block.downsample[0],filters_to_keep)
+                current_block.downsample[1]= adjust_batch_layer(current_block.downsample[1],filters_to_keep)
+                
         # batch 레이어 바꿔야지
         batch_name,_ = idx2name_module[index+1]
         batch_name_lst=batch_name.split('.')
@@ -48,6 +52,12 @@ def prune_step(network,name,num_channel,idx2name_module,index):
                         bias=False
                         )
                 setattr(next_current_block,'downsample',conv)
+
+            elif isinstance(next_current_block.downsmaple,nn.Sequential):
+                if name_lst[0]!=next_name[0]:  # 같은 레이어면 바꿀 필요없음 아무런 이상이없음..
+                    downsample_cnn=next_current_block.downsample[0]
+                    downsample_newcnn=adjust_next_layer(downsample_cnn,filters_to_keep)
+                    next_current_block.downsample[0] = downsample_newcnn
         else:
             # Linear인 경우
             next_current_layer=getattr(network,next_name)
