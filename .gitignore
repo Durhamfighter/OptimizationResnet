@@ -256,3 +256,8 @@ data.tar.gz
 mlruns
 mlartifacts
 baseline_code
+*.joblib
+*_batch_*
+*_batch
+*.meta
+*.tar.gz
