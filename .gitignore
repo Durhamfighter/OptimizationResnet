@@ -240,7 +240,10 @@ Temporary Items
 ### macOS Patch ###
 # iCloud generated files
 *.icloud
-
+# Ignore Python bytecode files and cache
+__pycache__/
+*.pyc
+*.pyo
 # End of https://www.toptal.com/developers/gitignore/api/macos
 
 

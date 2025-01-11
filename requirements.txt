@@ -1,0 +1,4 @@
+torch=2.5.1
+tqdm
+torchvision=0.20.1
+joblib
