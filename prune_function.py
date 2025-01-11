@@ -35,23 +35,6 @@ def adjust_next_layer(layer, filters_to_keep):
         adjust_layer.bias.data=layer.bias.data[filters_to_keep]
     return adjust_layer
 
-def skip_residual(input_tensor,residual_tensor):
-    """
-    input -> before
-    residual -> after
-    """
-
-    if input_tensor.shape!= residual_tensor.shape:
-        conv=nn.Conv2d(
-            in_channels=input_tensor.shape[1],
-            out_channels=residual_tensor.shape[1],
-            kernel_size=1,
-            bias=False
-        )
-        input_tensor=conv(input_tensor)
-
-    return input_tensor+residual_tensor
-
 def adjust_batch_layer(batch_layer,filters_to_keep):
 
     ### 조정할 배치 레이어 만들기

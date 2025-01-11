@@ -8,7 +8,7 @@ def prune_step(network,name,num_channel,idx2name_module,index):
         current_block=getattr(network,name_lst[0])[int(name_lst[1])]
         current_layer=getattr(current_block,name_lst[2])
         filters_to_keep=sort_filter(current_layer,num_channel)
-
+        len(filters_to_keep)
         # 현재 레이어 프룬하자
         new_layer=  prune_layer(current_layer,filters_to_keep)
         setattr(current_block, name_lst[2], new_layer)
@@ -23,9 +23,9 @@ def prune_step(network,name,num_channel,idx2name_module,index):
                     )
             setattr(current_block,'downsample',conv)
         ## sequential 부분도 생각해야함
-        elif isinstance(current_block.downsmaple,nn.Sequential):
-            if name_lst[2]=='cnn2':
-                current_block.downsample[0] =  prune_layer(current_block.downsample[0],filters_to_keep)
+        elif isinstance(current_block.downsample,nn.Sequential):
+            if name_lst[2]=='conv2':
+                current_block.downsample[0] = prune_layer(current_block.downsample[0],filters_to_keep)
                 current_block.downsample[1]= adjust_batch_layer(current_block.downsample[1],filters_to_keep)
                 
         # batch 레이어 바꿔야지
@@ -53,8 +53,9 @@ def prune_step(network,name,num_channel,idx2name_module,index):
                         )
                 setattr(next_current_block,'downsample',conv)
 
-            elif isinstance(next_current_block.downsmaple,nn.Sequential):
-                if name_lst[0]!=next_name[0]:  # 같은 레이어면 바꿀 필요없음 아무런 이상이없음..
+            elif isinstance(next_current_block.downsample,nn.Sequential):
+                print(name_lst[0],next_name[0])
+                if name_lst[0]!=next_lst[0]:  # 같은 레이어면 바꿀 필요없음 아무런 이상이없음..
                     downsample_cnn=next_current_block.downsample[0]
                     downsample_newcnn=adjust_next_layer(downsample_cnn,filters_to_keep)
                     next_current_block.downsample[0] = downsample_newcnn
