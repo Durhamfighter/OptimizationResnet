@@ -3,9 +3,7 @@ from optimizer import *
 import torch.nn as nn
 from utils import *
 from torchvision import models
-def train(args,num_epochs=10):
-
-    model = models.resnet18(pretrained=True).to(args.device)
+def train(args,model,num_epochs=10):
     num_classes = 10
     model.fc = nn.Linear(model.fc.in_features, num_classes).to(args.device)
     

@@ -1,7 +1,9 @@
 from prune_function import *
 import torch
 import torch.nn as nn
+
 def prune_step(network,name,num_channel,idx2name_module,index):
+    part=[]
     # 현재 이름에 따라 filters_to_keep 정함
     if 'layer' in name:
         name_lst=name.split('.')
@@ -15,6 +17,7 @@ def prune_step(network,name,num_channel,idx2name_module,index):
 
         # 현재 레이어 해당 block에 downsample 이없고 residual connection의 차원이 안맞을시 추가.
         if current_block.downsample is None and current_block.conv1.in_channels!=current_block.conv2.out_channels:
+            part.append(name)
             conv=nn.Conv2d(
                     in_channels=current_block.conv1.in_channels,
                     out_channels=current_block.conv2.out_channels,
@@ -45,6 +48,7 @@ def prune_step(network,name,num_channel,idx2name_module,index):
             next_new_layer=adjust_next_layer(next_current_layer,filters_to_keep)
             setattr(next_current_block, next_lst[2], next_new_layer)
             if next_current_block.downsample is None and next_current_block.conv1.in_channels!=next_current_block.conv2.out_channels:
+                part.append(next_name)
                 conv=nn.Conv2d(
                         in_channels=next_current_block.conv1.in_channels,
                         out_channels=next_current_block.conv2.out_channels,
@@ -54,7 +58,6 @@ def prune_step(network,name,num_channel,idx2name_module,index):
                 setattr(next_current_block,'downsample',conv)
 
             elif isinstance(next_current_block.downsample,nn.Sequential):
-                print(name_lst[0],next_name[0])
                 if name_lst[0]!=next_lst[0]:  # 같은 레이어면 바꿀 필요없음 아무런 이상이없음..
                     downsample_cnn=next_current_block.downsample[0]
                     downsample_newcnn=adjust_next_layer(downsample_cnn,filters_to_keep)
@@ -92,4 +95,4 @@ def prune_step(network,name,num_channel,idx2name_module,index):
                     bias=False
                     )
         setattr(next_current_block,'downsample',conv)
-    return network
+    return network,part

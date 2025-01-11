@@ -13,11 +13,12 @@ def main(args):
     print('prune?')
     device = torch.device(args.device if torch.cuda.is_available() else "cpu")
     if not args.pretrained:
-        model = train(args,num_epochs=10)
+        model = models.resnet18(pretrained=True).to(args.device)
+        trained_model = train(args,model,num_epochs=10)
 
         os.makedirs(args.model_path, exist_ok=True)
         model_name=os.path.join(args.model_path,'resnet18.joblib')
-        joblib.dump(model,model_name)
+        joblib.dump(trained_model,model_name)
     else:
         #모델 불르기
         model_name=os.path.join(args.model_path,'resnet18.joblib')
@@ -48,7 +49,8 @@ def main(args):
                     
                     network_name_v='resenet'+'_'+ name +'_'+str(sum(steps[:i+1]))+'.joblib'
                     network_name=os.path.join(args.model_path,network_name_v)
-
+                    
+                    train(args,model,num_epochs=5)
                     joblib.dump(network,network_name)
                     test(args,network,test_loader,sum(steps[:i+1]))
                 idx+=2
