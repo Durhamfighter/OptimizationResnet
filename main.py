@@ -55,11 +55,6 @@ def main(args):
                     test(args,network,test_loader,sum(steps[:i+1]))
                 idx+=2
                 
-        
-
-
-
-
 
 
 if __name__ == "__main__":
