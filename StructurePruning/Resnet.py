@@ -60,13 +60,13 @@ class BasicBlock(nn.Module):
                     bias=False
                     )
         elif isinstance(self.downsample,nn.Sequential):
-            print("isintance 는들어오는거네?")
+            
             if self.conv2==layer_to_prune:
-                print('yes')
+                
                 self.downsample[0]= prune_layer(self.downsample[0],filters_to_keep)
                 self.downsample[1]= adjust_batch_layer(self.downsample[1],filters_to_keep)
             elif self.conv1==layer_to_prune:
-                print('g')
+                
                 self.downsample[0]= adjust_next_layer(self.downsample[0],filters_to_keep)
         
     
@@ -113,7 +113,7 @@ class Bottleneck(nn.Module):
         #self.skip_add= nn.quantized.FloatFunctional()
         self.stride = stride
 
-    def fowrad(self,x):
+    def forward(self,x):
         identity=x
 
         out = self.conv1(x)
